@@ -1,15 +1,14 @@
 name: Deploy site to GitHub Pages
 
 on:
+  # A version tag in this repo
   push:
-    branches: [main]
-  workflow_dispatch:
-  # Fired by the engine repo when its docs change:
+    tags: ['v*']
+  # Fired by the engine repo when its docs change (optionally with client_payload.ref):
   #   gh api repos/<owner>/World-Gal-Game-Web/dispatches -f event_type=docs-updated
   repository_dispatch:
     types: [docs-updated]
-  schedule:
-    - cron: '17 3 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,6 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: treeleaves30760/world-gal-game
+          ref: ${{ github.event.client_payload.ref || 'main' }}
           path: engine
 
       - uses: actions/setup-node@v4
@@ -51,7 +51,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: .vitepress/dist
 
   deploy:
     needs: build

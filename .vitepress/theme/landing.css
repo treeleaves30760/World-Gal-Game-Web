@@ -1,0 +1,89 @@
+/* Landing page (index.md): tokens + shared building blocks.
+   Component-specific rules live in each component's scoped style. */
+.lp {
+  --bg: #f3f2fa;
+  --bg-alt: #e9e9f6;
+  --ink: #171a33;
+  --muted: #4b4f73;
+  --rule: #cfd1e8;
+  --accent: #4450c8;
+  --lantern: #a8650f;
+  --surface: #ffffff;
+  --hero-top: #dfe1f7;
+  --hero-bottom: #f3f2fa;
+  --moon: #e9b94f;
+  --star: #5560c8;
+  --serif: 'Noto Serif TC', 'Songti TC', 'Source Han Serif TC', serif;
+  --latin: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+  --sans: 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow-x: clip;
+}
+.dark .lp {
+  --bg: #0e1120;
+  --bg-alt: #121631;
+  --ink: #e8eaf8;
+  --muted: #a3a9d3;
+  --rule: #272c52;
+  --accent: #8b96f0;
+  --lantern: #f2c879;
+  --surface: #151932;
+  --hero-top: #1b2050;
+  --hero-bottom: #0e1120;
+  --moon: #f2c879;
+  --star: #dfe3ff;
+}
+
+.lp code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+.lp a { color: var(--accent); text-underline-offset: 3px; }
+.lp a:focus-visible,
+.lp button:focus-visible { outline: 2px solid var(--lantern); outline-offset: 3px; }
+.lp p { line-height: 1.85; max-width: 62ch; }
+.lp h1, .lp h2, .lp h3 { border: 0; padding: 0; letter-spacing: normal; }
+
+/* sections */
+.lp-section { padding: 5rem 1rem; background: var(--bg); }
+.lp-section.alt { background: var(--bg-alt); }
+.lp-wrap { max-width: 1120px; margin: 0 auto; }
+.lp-head { margin-bottom: 2.75rem; }
+.lp .lp-h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.lp .lp-h2-en { margin: 0.4rem 0 0; font-family: var(--latin); font-style: italic; color: var(--muted); font-size: 1.1rem; }
+.lp .lp-h3 { margin: 0; font-family: var(--serif); font-weight: 700; font-size: 1.3rem; line-height: 1.35; color: var(--ink); }
+.lp .lp-h3-en { font-family: var(--latin); font-style: italic; font-weight: 400; font-size: 0.9rem; color: var(--muted); margin-left: 0.4rem; }
+.lp .lp-lead { font-size: 1.1rem; line-height: 1.85; margin-top: 0; }
+
+/* code boxes (always dark: they are terminal / editor panes in either theme) */
+.lp-code { margin: 0; border-radius: 10px; overflow: hidden; background: #0f1330; border: 1px solid #272c52; box-shadow: 0 20px 50px -28px rgba(5, 7, 30, 0.8); }
+.lp-code-title { padding: 0.55rem 1rem; font-family: var(--mono); font-size: 0.78rem; color: #a3a9d3; background: #151a3f; border-bottom: 1px solid #272c52; }
+.lp-pre { margin: 0; padding: 1rem 1.1rem; overflow-x: auto; background: transparent; color: #dfe3ff; font-family: var(--mono); font-size: 0.8rem; line-height: 1.7; tab-size: 2; }
+.lp-pre code { font-size: inherit; background: none; color: inherit; }
+.lp-pre .com { color: #7e87b4; }
+.lp-pre .req { color: #8b96f0; font-weight: 500; }
+.lp-pre .res { color: #f2c879; font-weight: 500; }
+.lp-pre .key { color: #9fb4ff; }
+.lp-pre .str { color: #c3e88d; }
+.lp-pre .num { color: #f78c6c; }
+.lp-pre .indent { padding-left: 2ch; }
+
+@media (max-width: 600px) {
+  .lp-section { padding: 3.5rem 1rem; }
+}

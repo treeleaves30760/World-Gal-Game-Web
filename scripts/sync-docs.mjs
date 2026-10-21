@@ -4,7 +4,7 @@
 //   ENGINE_DIR   engine checkout (default: ../World-Gal-Game)
 //
 // - copies <ENGINE_DIR>/docs/*.md and ROADMAP.md (as roadmap.md)
-// - injects `slug: /` into README.md so it becomes the /docs landing
+// - renames README.md to index.md so it becomes the /docs/ landing
 // - rewrites relative links that leave the synced set to absolute GitHub URLs
 //   so the build has no broken links.
 import fs from 'node:fs';
@@ -41,7 +41,8 @@ function mapTarget(target, fromDir) {
   const posix = relToEngine.split(path.sep).join('/');
   const inDocs = posix.startsWith('docs/') && !posix.slice(5).includes('/');
   if (inDocs && posix.endsWith('.md') && synced.has(path.basename(posix).toLowerCase())) {
-    return path.basename(posix) + tail;
+    const base = path.basename(posix);
+    return (base.toLowerCase() === 'readme.md' ? 'index.md' : base) + tail;
   }
   if (posix === 'ROADMAP.md' && hasRoadmap) return 'roadmap.md' + tail;
   return GITHUB + posix + tail;
@@ -67,29 +68,16 @@ function rewrite(text, fromDir) {
     .join('\n');
 }
 
-function withFrontMatter(text, extra) {
-  const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
-  if (fm) {
-    const keep = Object.keys(extra).filter((k) => !new RegExp(`^${k}:`, 'm').test(fm[1]));
-    if (!keep.length) return text;
-    const add = keep.map((k) => `${k}: ${extra[k]}`).join('\n');
-    return `---\n${fm[1]}\n${add}\n---\n` + text.slice(fm[0].length);
-  }
-  const add = Object.entries(extra).map(([k, v]) => `${k}: ${v}`).join('\n');
-  return `---\n${add}\n---\n\n${text}`;
-}
-
 fs.rmSync(outDir, {recursive: true, force: true});
 fs.mkdirSync(outDir, {recursive: true});
 
 for (const name of docNames) {
   let text = rewrite(fs.readFileSync(path.join(srcDocs, name), 'utf8'), srcDocs);
-  if (name === 'README.md') text = withFrontMatter(text, {slug: '/', title: '"文件總覽"', sidebar_label: '"總覽 Overview"'});
-  fs.writeFileSync(path.join(outDir, name), text);
+  const outName = name.toLowerCase() === 'readme.md' ? 'index.md' : name;
+  fs.writeFileSync(path.join(outDir, outName), text);
 }
 if (hasRoadmap) {
   let text = rewrite(fs.readFileSync(path.join(engine, 'ROADMAP.md'), 'utf8'), engine);
-  text = withFrontMatter(text, {sidebar_label: '"路線圖 Roadmap"'});
   fs.writeFileSync(path.join(outDir, 'roadmap.md'), text);
 }
 console.log(`[sync-docs] ${docNames.length} docs${hasRoadmap ? ' + roadmap' : ''} <- ${engine}`);

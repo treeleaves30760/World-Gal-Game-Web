@@ -1,10 +1,10 @@
 node_modules
-build
-.docusaurus
-.cache
 # synced from the engine repo by scripts/sync-docs.mjs
 docs/
+.vitepress/dist
+.vitepress/cache
+.vitepress/.temp
+engine/
 .screenshots/
 .DS_Store
 npm-debug.log*
-engine/
