@@ -63,7 +63,71 @@ export default defineConfig({
     ],
     sidebar: { '/docs/': buildSidebar(root) },
     socialLinks: [{ icon: 'github', link: REPO }],
-    search: { provider: 'local' },
+    search: {
+      provider: 'local',
+      options: {
+        // The default MiniSearch tokenizer splits on whitespace, so a Chinese
+        // phrase becomes one giant term. Index CJK runs as single characters
+        // plus bigrams; queries use bigrams combined with AND. Both functions
+        // are serialised into the client bundle: keep them self-contained.
+        miniSearch: {
+          options: {
+            tokenize: function (text) {
+              const out = []
+              const parts = String(text).toLowerCase().match(/[㐀-鿿豈-﫿぀-ヿ]+|[\p{L}\p{N}_]+/gu) || []
+              for (const part of parts) {
+                if (/^[㐀-鿿豈-﫿぀-ヿ]/.test(part)) {
+                  for (let i = 0; i < part.length; i++) {
+                    out.push(part[i])
+                    if (i + 1 < part.length) out.push(part.slice(i, i + 2))
+                  }
+                } else {
+                  out.push(part)
+                }
+              }
+              return out
+            },
+          },
+          searchOptions: {
+            combineWith: 'AND',
+            tokenize: function (text) {
+              const out = []
+              const parts = String(text).toLowerCase().match(/[㐀-鿿豈-﫿぀-ヿ]+|[\p{L}\p{N}_]+/gu) || []
+              for (const part of parts) {
+                if (/^[㐀-鿿豈-﫿぀-ヿ]/.test(part)) {
+                  if (part.length === 1) out.push(part)
+                  for (let i = 0; i + 1 < part.length; i++) out.push(part.slice(i, i + 2))
+                } else {
+                  out.push(part)
+                }
+              }
+              return out
+            },
+            // Fuzzy matching on two-character CJK terms only adds noise.
+            fuzzy: function (term) {
+              return /[㐀-鿿豈-﫿぀-ヿ]/.test(term) ? false : 0.2
+            },
+            prefix: function (term) {
+              return !/[㐀-鿿豈-﫿぀-ヿ]/.test(term)
+            },
+          },
+        },
+        locales: {
+          root: {
+            translations: {
+              button: { buttonText: '搜尋文件', buttonAriaLabel: '搜尋文件' },
+              modal: {
+                displayDetails: '顯示詳細',
+                resetButtonTitle: '清除',
+                backButtonTitle: '關閉',
+                noResultsText: '找不到相關結果',
+                footer: { selectText: '選擇', navigateText: '切換', closeText: '關閉' },
+              },
+            },
+          },
+        },
+      },
+    },
     outline: { level: [2, 3], label: '本頁內容' },
     editLink: {
       // serialised into the client bundle: must be self-contained (no outer refs)
