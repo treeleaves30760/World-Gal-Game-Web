@@ -1,0 +1,64 @@
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Fired by the engine repo when its docs change:
+  #   gh api repos/<owner>/World-Gal-Game-Web/dispatches -f event_type=docs-updated
+  repository_dispatch:
+    types: [docs-updated]
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout engine repo (docs source of truth)
+        uses: actions/checkout@v4
+        with:
+          repository: treeleaves30760/world-gal-game
+          path: engine
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      - name: Build (syncs docs from engine/)
+        run: npm run build
+        env:
+          ENGINE_DIR: engine
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,39 @@
+{
+  "name": "world-gal-game-web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Website and documentation for the World Gal-Game engine",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "sync-docs": "node scripts/sync-docs.mjs",
+    "prestart": "npm run sync-docs",
+    "start": "docusaurus start",
+    "prebuild": "npm run sync-docs",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.1",
+    "@docusaurus/preset-classic": "3.10.1",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  }
+}
