@@ -1,0 +1,15 @@
+// Cloudflare Workers static-assets deployment for the World Gal-Game website.
+// `npm run deploy` builds the VitePress site and uploads .vitepress/dist.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "world-gal-game",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./.vitepress/dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    { "pattern": "world-gal-game.xn--essy41b.com", "custom_domain": true }
+  ]
+}

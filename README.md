@@ -12,7 +12,7 @@ World Gal-Game 引擎的官方網站與文件站，使用 **VitePress（Vue 3）
 - `.vitepress/theme/`：擴充預設主題，夜靛色 token（亮 / 暗）
 - `.vitepress/config.mts`、`sidebar.mts`、`markdown-safety.mts`：設定、側欄、Markdown 安全處理
 - `scripts/sync-docs.mjs`：同步引擎文件
-- `public/`：`CNAME`、favicon、logo、social card（SVG 與 1200x630 PNG）
+- `public/`：favicon、logo、social card（SVG 與 1200x630 PNG）
 
 ## 文件如何同步
 
@@ -41,26 +41,29 @@ ENGINE_DIR=/path/to/World-Gal-Game npm run build
 
 ## 部署
 
-`.github/workflows/deploy.yml` 只在下列情況執行：本 repo 推送 `v*` tag、收到 `repository_dispatch`
-（type `docs-updated`，可帶 `client_payload.ref` 指定引擎分支或 tag）、手動觸發。
+網站部署在 Cloudflare Workers（static assets），設定見 `wrangler.jsonc`，網域
+`world-gal-game.夜橘.com`（punycode `world-gal-game.xn--essy41b.com`）由 wrangler
+以 custom domain 綁定並自動建立 DNS 紀錄。
+
+本機直接部署（需先 `npx wrangler login`）：
 
 ```bash
-git tag v0.1.0 && git push --tags      # 在本 repo 發佈
+npm run deploy        # = npm run build && wrangler deploy
 ```
 
-在引擎 repo 推 tag 時，由引擎的 workflow 呼叫
-`gh api repos/<owner>/World-Gal-Game-Web/dispatches -f event_type=docs-updated` 即可觸發。
+CI（`.github/workflows/deploy.yml`）只在下列情況執行：本 repo 推送 `v*` tag、
+收到 `repository_dispatch`（type `docs-updated`，`client_payload.ref` 指定引擎的
+tag）、手動觸發。引擎 repo 推 `v*` tag 時，其 `notify-website.yml` 會自動發送 dispatch。
 
-一次性設定：Settings → Pages → Source 選「GitHub Actions」，Custom domain 填
-`world-gal-game.夜橘.com`（`public/CNAME` 已包含 punycode 網域）。
+```bash
+git tag v0.1.1 && git push --tags      # 在本 repo 發佈
+```
 
-### 自訂網域與 DNS
-
-在 Cloudflare 新增 CNAME：`world-gal-game` → `treeleaves30760.github.io`，
-Proxy 狀態選 **DNS only（灰雲）**，至少等到 GitHub 簽發憑證並勾選 Enforce HTTPS 之後再考慮開橘雲。
+一次性設定：repo secrets 需要 `CLOUDFLARE_ACCOUNT_ID` 與 `CLOUDFLARE_API_TOKEN`
+（權限：Account › Workers Scripts: Edit、Zone › Workers Routes: Edit）。
 
 ## 授權
 
 MIT，見 [LICENSE](LICENSE)。
 
-*English: deploys run only on `v*` tags, `docs-updated` dispatches and manual runs. DNS: Cloudflare CNAME `world-gal-game` to `treeleaves30760.github.io`, DNS only (grey cloud) at least until GitHub issues the certificate.*
+*English: deployed to Cloudflare Workers static assets with `wrangler deploy` (`npm run deploy`). CI deploys only on `v*` tags, `docs-updated` dispatches from the engine repo, and manual runs; it needs the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets.*
