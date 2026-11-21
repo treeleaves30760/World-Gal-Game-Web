@@ -10,7 +10,7 @@ const CATEGORIES: { label: string; collapsed: boolean; items: string[] }[] = [
     label: '製作遊戲 Authoring a Pack',
     collapsed: true,
     items: [
-      'pack-format', 'scenes', 'characters', 'locations', 'destination-schedule-map', 'items',
+      'pack-format', 'scenes', 'characters', 'tavern', 'locations', 'destination-schedule-map', 'items',
       'quests', 'resources', 'shops', 'achievements', 'affection', 'theme-and-locale',
       'presentation-and-extras', 'cookbook',
     ],
